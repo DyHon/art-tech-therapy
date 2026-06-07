@@ -1,30 +1,30 @@
-# Migrated from Google Docs — index of cloud-only originals
+# Migrated from Google Docs — conversion index
 
-- Source(s): the project's `docs/` folder (a symlink to `G:\My Drive\docs`).
+- Source(s): the project's original `docs/` Google Docs, exported to `.docx` by the owner
+  and converted (VI→EN) into the Markdown notes linked below.
 
 ## Summary
-The `docs/` folder held one readable Markdown file plus several Google Docs (`.gdoc`)
-files. **`.gdoc` files are not real documents** — they are ~174-byte pointers into Google
-Drive and cannot be read with local file tools (their text lives in Google's cloud). Only
-`first-draft.md` was migratable as text → see [[architecture-vision]].
+The project's design docs originally lived as Google Docs in `docs/` (Vietnamese). They
+were exported to `.docx`, their text extracted, and translated into English Markdown notes
+in this `Knowledge/` folder. **This migration is complete** — every original now has a
+corresponding note. The English translations are by Claude; check nuance against the
+originals if a detail matters. The temporary `docs/` export folder can be deleted.
 
-The originals below remain in Google Drive untouched. To bring their full text into the
-vault, open each in Google Docs and **File → Download → Markdown**, then paste into a new
-`Knowledge/` note. Titles are preserved here as a map.
-
-## Key points — original Google Docs (content NOT migrated; cloud-only)
-| Original title | Likely topic | Suggested vault home |
-|---|---|---|
-| Báo Cáo Nghiên Cứu Khả Thi Và Thiết Kế Kiến Trúc Hệ Sinh Thái Art-Tech Therapy… | Full feasibility study & architecture report | `Knowledge/feasibility-report.md` |
-| phase G1 - Milestones | Milestone roadmap | `Projects/art-tech-therapy/` (cross-ref CHANGELOG) |
-| HNSW index dùng để làm gì | Why/what HNSW index is for | [[pgvector-hnsw]] |
-| Sử dụng từ Entry là hợp lý nhất chưa… | Naming: is "Entry" the right term? | ADR on domain naming |
-| what is it/JournalEntry | `JournalEntry` model intent | `Knowledge/` model notes |
-| what is it/ArchetypalTag | `ArchetypalTag` model intent | `Knowledge/` model notes |
-| why using/…Whisper cho ASR | Rationale: Whisper for ASR | ADR / Knowledge |
-| why using/…Vitest…Playwright… | Rationale: Vitest (unit) + Playwright (E2E) | ADR / Knowledge |
-| why using/…gọi là Art-Tech Therapy | Rationale: the "Art-Tech Therapy" name | Knowledge |
-| first-draft (gdoc duplicate of first-draft.md) | Same as migrated architecture vision | [[architecture-vision]] |
+## Key points — original → converted note
+| Original Google Doc | Converted English note |
+|---|---|
+| Báo Cáo Nghiên Cứu Khả Thi… Art-Tech Therapy (feasibility study & architecture) | [[feasibility-report]] |
+| phase G1 - Milestones | [[roadmap-5-milestones]] |
+| HNSW index dùng để làm gì (what is HNSW for) | [[why-hnsw-index]] (+ reference [[pgvector-hnsw]]) |
+| Sử dụng từ Entry là hợp lý nhất chưa (naming: "Entry"?) | [[entry-naming-rationale]] |
+| what is it / JournalEntry | [[data-model-journalentry]] |
+| what is it / ArchetypalTag | [[data-model-archetypaltag]] |
+| why using / Whisper cho ASR | [[why-whisper-asr]] |
+| why using / Vitest + Playwright | [[why-vitest-playwright]] |
+| why using / gọi là Art-Tech Therapy (the name) | [[why-art-tech-therapy]] |
+| first-draft (duplicate of first-draft.md) | [[architecture-vision]] |
 
 ## Related notes
 - [[architecture-vision]]
+- [[feasibility-report]]
+- [[roadmap-5-milestones]]

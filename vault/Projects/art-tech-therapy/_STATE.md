@@ -15,15 +15,18 @@ next action is to draft the M4 implementation plan for approval.
 - Security hardening ✅ (this session) — encryption now fail-fast on missing
   `ENCRYPTION_KEY`; `decrypt` throws instead of silently returning ciphertext.
 - Tests: 13/13 passing; `tsc --noEmit` clean.
+- Docs migration ✅ — 9 Vietnamese Google Docs exported to `.docx` and translated to
+  English Markdown in `vault/Knowledge/` (feasibility report, 5-milestone roadmap, data
+  models, rationale notes). The full roadmap has **5 milestones** (M5 = The Mirror
+  dashboard + full ShadowGuard crisis redirect).
 
 ## Next steps
 1. Draft M4 plan: `adapter.embed()`, HNSW index `idx_journal_entry_vector_hnsw`,
    `$queryRaw` similarity search, P95 < 150ms (per PERSONAS Guardian rules).
 2. Fold timezone-from-`User.personaMask` fix into M4 (PROCESS Step 4.5; currently
    `UserSnapshot.recordedAt` defaults to server UTC).
-3. Convert exported Google Docs → English Markdown in `vault/Knowledge/`. Owner will
-   export the cloud docs into a temporary `docs/` folder; do the conversion once present.
-   (See [[_migrated-from-google-docs]] for the list of originals.)
+3. (Owner) delete the temporary `docs/` export folder once satisfied with the converted
+   notes — it is gitignored and will not be committed.
 
 ## Blockers / open questions
 - Policy tension: ingest route persists `contentEncrypted` (encrypted raw transcript),
@@ -36,4 +39,5 @@ next action is to draft the M4 implementation plan for approval.
 - [[2026-06-07-aes256gcm-failfast-key]] (decision)
 - [[2026-06-07-encryption-hardening-vault-setup]] (session)
 - Governance chain: POLICIES.md > CLAUDE.md > PROCESS.md > PERSONAS.md
-- [[architecture-vision]] (migrated design doc)
+- [[architecture-vision]] · [[feasibility-report]] · [[roadmap-5-milestones]] (design docs)
+- [[_migrated-from-google-docs]] (conversion index)
