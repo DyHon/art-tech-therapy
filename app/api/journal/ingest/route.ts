@@ -4,7 +4,12 @@ import fs from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import { transcodeAudio, transcribeAudioFile } from "@/lib/security/media-processor";
-import { checkCrisis } from "@/lib/security/shadow-guard";
+import * as ShadowGuard from "@/lib/security/shadow-guard";
+import { prisma } from "@/lib/prisma";
+import { encrypt } from "@/lib/security/encryption";
+import { GeminiAdapter } from "@/lib/ai/adapters/gemini.adapter";
+import { IAIEngineAdapter } from "@/lib/ai/adapter.interface";
+import { TJungianAnalysis } from "@/lib/validations/analysis";
 
 // Zod schema for direct text entries
 const TextEntrySchema = z.object({
@@ -17,14 +22,81 @@ const AudioMetadataSchema = z.object({
   entryType: z.enum(["DREAM", "REFLECTION", "ACTIVE_IMAGINATION", "CINEMATIC_RESPONSE"]).default("DREAM"),
 });
 
+/**
+ * Persists the encrypted journal entry, nested archetypal tags, and states a new psychological snapshot.
+ */
+async function persistJournalAndSnapshot(
+  cleanTranscript: string,
+  entryType: "DREAM" | "REFLECTION" | "ACTIVE_IMAGINATION" | "CINEMATIC_RESPONSE",
+  analysis: TJungianAnalysis
+) {
+  // 1. Resolve seeker user or seed a default user in development
+  let user = await prisma.user.findFirst();
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        email: "seeker@psyche.net",
+        passwordHash: "pbkdf2-placeholder-seeker-hash",
+        personaMask: {},
+        shadowNodes: []
+      }
+    });
+  }
+  
+  const userId = user.id;
+  const contentEncrypted = encrypt(cleanTranscript);
+
+  // 2. Create the Journal Entry along with its archetypal tags relational mappings
+  const entry = await prisma.journalEntry.create({
+    data: {
+      userId,
+      entryType,
+      contentEncrypted,
+      analysisJson: analysis as any, // Cast to any for Prisma Json compatibility
+      archetypalTags: {
+        create: analysis.archetypal_mappings.map(m => ({
+          archetypeName: m.archetype,
+          intensityScore: m.intensity,
+          symbolicMotifs: [m.dream_representation],
+          isIntegrated: false
+        }))
+      }
+    }
+  });
+
+  // 3. Compute shadow awareness score: ratio of Shadow archetype intensity to 10
+  const shadowMapping = analysis.archetypal_mappings.find(
+    m => m.archetype.toLowerCase() === "shadow"
+  );
+  const shadowScore = shadowMapping ? shadowMapping.intensity / 10.0 : 0.5;
+
+  // 4. Create immutable snapshot of functions distribution
+  const snapshot = await prisma.userSnapshot.create({
+    data: {
+      userId,
+      psychologicalFunctions: analysis.psychic_tension.function_ratios as any,
+      tensionIndex: analysis.psychic_tension.tension_score,
+      shadowScore: shadowScore
+    }
+  });
+
+  return { entryId: entry.id, snapshotId: snapshot.id };
+}
+
 export async function POST(req: NextRequest) {
   const requestId = randomUUID();
   const tempDir = path.join(process.cwd(), "temp-media", requestId);
   let rawFilePath = "";
   let transcodedFilePath = "";
+  
+  // Transient transcription variable
+  let clean_transcript: string | null = null;
 
   try {
     const contentType = req.headers.get("content-type") || "";
+    
+    // Instantiating the AI Engine Adapter polymorphically via the interface
+    const aiEngine: IAIEngineAdapter = new GeminiAdapter();
 
     // 1. DIRECT TEXT ENTRY INGESTION (JSON)
     if (contentType.includes("application/json")) {
@@ -36,29 +108,41 @@ export async function POST(req: NextRequest) {
       }
 
       const { content, entryType } = validation.data;
+      clean_transcript = content;
       
       // ShadowGuard pre-check before completing ingestion
-      const crisisCheck = checkCrisis(content);
-      if (crisisCheck.crisis_flag) {
+      const crisisAnalysis = ShadowGuard.scan(clean_transcript);
+      
+      if (crisisAnalysis.crisis_flag) {
+        // Safe database save of crisis flag (bypasses AI)
+        await persistJournalAndSnapshot(clean_transcript, entryType, crisisAnalysis);
+        
         return NextResponse.json({
           crisis_flag: true,
           redirect: "/safety",
-          reason: crisisCheck.reason
+          reason: "Crisis sentiment detected on semantic boundaries.",
+          analysis: crisisAnalysis
         });
       }
 
+      // Safe processing: trigger the Pluggable AI Engine Adapter
+      const analysis = await aiEngine.analyze(clean_transcript);
+
+      // Save complete high-fidelity analytical results to relational database
+      const { entryId } = await persistJournalAndSnapshot(clean_transcript, entryType, analysis);
+
       return NextResponse.json({
         success: true,
+        entryId,
         entryType,
-        clean_transcript: content,
         crisis_flag: false,
+        analysis,
         requestId
       });
     }
 
     // 2. HYPNOPOMPIC AUDIO ENTRY INGESTION (MULTIPART FORM DATA)
     if (contentType.includes("multipart/form-data")) {
-      // Parse form data using Next.js native formData()
       const formData = await req.formData();
       const file = formData.get("file") as Blob | null;
       const entryTypeRaw = formData.get("entryType") || "DREAM";
@@ -74,15 +158,12 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Audio file is required" }, { status: 400 });
       }
 
-      // Check size limit (10MB)
       if (file.size > 10 * 1024 * 1024) {
         return NextResponse.json({ error: "Audio file exceeds 10MB limit" }, { status: 400 });
       }
 
-      // Ensure temp directory exists
       await fs.promises.mkdir(tempDir, { recursive: true });
 
-      // Identify extension from file name or type
       let ext = ".wav";
       if (file.type.includes("mpeg") || file.type.includes("mp3")) {
         ext = ".mp3";
@@ -93,32 +174,41 @@ export async function POST(req: NextRequest) {
       rawFilePath = path.join(tempDir, `raw${ext}`);
       transcodedFilePath = path.join(tempDir, "transcoded.mp3");
 
-      // Save uploaded buffer to temp disk file
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       await fs.promises.writeFile(rawFilePath, buffer);
 
-      // Transcode audio: converts to 16kHz mono, applies high-pass filter
+      // Transcode audio mono Mono 16kHz
       await transcodeAudio(rawFilePath, transcodedFilePath);
 
-      // Transcribe via Whisper
-      const clean_transcript = await transcribeAudioFile(transcodedFilePath);
+      // Transcribe audio using ASR Engine
+      clean_transcript = await transcribeAudioFile(transcodedFilePath);
 
-      // ShadowGuard pre-check on transcribed text
-      const crisisCheck = checkCrisis(clean_transcript);
-      if (crisisCheck.crisis_flag) {
+      // ShadowGuard semantic check
+      const crisisAnalysis = ShadowGuard.scan(clean_transcript);
+      if (crisisAnalysis.crisis_flag) {
+        await persistJournalAndSnapshot(clean_transcript, entryType, crisisAnalysis);
+        
         return NextResponse.json({
           crisis_flag: true,
           redirect: "/safety",
-          reason: crisisCheck.reason
+          reason: "Crisis sentiment detected on ASR text.",
+          analysis: crisisAnalysis
         });
       }
 
+      // Safe deep analysis via Gemini adapter
+      const analysis = await aiEngine.analyze(clean_transcript);
+
+      // Persist results securely
+      const { entryId } = await persistJournalAndSnapshot(clean_transcript, entryType, analysis);
+
       return NextResponse.json({
         success: true,
+        entryId,
         entryType,
-        clean_transcript,
         crisis_flag: false,
+        analysis,
         requestId
       });
     }
@@ -131,13 +221,17 @@ export async function POST(req: NextRequest) {
 
   } finally {
     // 3. MANDATORY ZERO DATA RETENTION (ZDR) PURGE
+    // Wipe local transient audio files
     if (fs.existsSync(tempDir)) {
       try {
         await fs.promises.rm(tempDir, { recursive: true, force: true });
-        console.log(`[ZDR_ENGINE]: Purged transient data for request_id: ${requestId}`);
+        console.log(`[ZDR_ENGINE]: Purged transient media files for request_id: ${requestId}`);
       } catch (err) {
         console.error(`[ZDR_ENGINE_ERROR]: Failed to delete transient directory: ${tempDir}`, err);
       }
     }
+    
+    // Purge clean_transcript from memory completely
+    clean_transcript = null;
   }
 }

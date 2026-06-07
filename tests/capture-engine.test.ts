@@ -36,8 +36,6 @@ describe("Hypnopompic Capture Engine - Validation Suite", () => {
   // Test 2: Whisper Mocking & Transcribing
   describe("Whisper ASR Mocking", () => {
     it("should return the correct mocked clean transcript based on input type", async () => {
-      process.env.NODE_ENV = 'test';
-      
       const mockAudioPath = path.join(tempTestDir, "mock_dream.mp3");
       fs.writeFileSync(mockAudioPath, "fake-audio-content");
 
@@ -46,8 +44,6 @@ describe("Hypnopompic Capture Engine - Validation Suite", () => {
     });
 
     it("should flag crisis sentiment if mock audio represents a crisis file", async () => {
-      process.env.NODE_ENV = 'test';
-      
       const mockCrisisAudioPath = path.join(tempTestDir, "mock_crisis.mp3");
       fs.writeFileSync(mockCrisisAudioPath, "fake-audio-content");
 
