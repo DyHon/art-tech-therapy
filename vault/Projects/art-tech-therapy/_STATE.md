@@ -2,12 +2,13 @@
 _Last updated: 2026-06-07 (session: encryption-hardening-vault-setup)_
 
 ## Current focus
-Milestone 4 — "The Red Thread" (pgvector vector-similarity search). Not yet started;
-next action is to draft the M4 implementation plan for approval.
+Milestone 4 ("The Red Thread") core is complete and **verified live** (real Gemini
+embeddings, HNSW search, migration applied). Next: Milestone 5 (The Mirror) — Constellation
+dashboard + full ShadowGuard crisis redirect.
 
 ## Progress / where things stand
 - M1 Database ✅ — Prisma + Postgres, pgvector ext enabled. Schema has
-  `JournalEntry.embedding vector(1536)` **declared but not yet populated**.
+  `JournalEntry.embedding vector(1536)`, now populated on ingest (M4).
 - M2 Hybrid ingestion ✅ — text + audio (Whisper ASR mock), ShadowGuard pre-check,
   ZDR purge of transient media in `finally`.
 - M3 Pluggable AI ✅ — `IAIEngineAdapter` → `GeminiAdapter`, Zod-validated output,
@@ -18,18 +19,18 @@ next action is to draft the M4 implementation plan for approval.
 - M4 core ✅ (this session) — `adapter.embed()` (Gemini `gemini-embedding-001` @1536 via
   `@google/genai`), `persistEmbedding` / `findSimilarEntries` ($queryRaw + HNSW cosine),
   migration `20260607120000_m4_red_thread` (HNSW index + `UserSnapshot.timezone`).
-  **Migration not yet applied; live embedding not yet smoke-tested.**
+  Migration applied ✅; live Gemini embedding verified end-to-end (1536-dim) ✅.
 - Docs migration ✅ — 9 Vietnamese Google Docs exported to `.docx` and translated to
   English Markdown in `vault/Knowledge/` (feasibility report, 5-milestone roadmap, data
   models, rationale notes). The full roadmap has **5 milestones** (M5 = The Mirror
   dashboard + full ShadowGuard crisis redirect).
 
 ## Next steps
-1. Apply the M4 migration (`prisma migrate deploy`) against the Docker Postgres, then
-   smoke-test the live Gemini embedding path with a real `GEMINI_API_KEY` (confirm a
-   1536-dim response) and verify HNSW search returns sane neighbours.
-2. Begin Milestone 5 (The Mirror): Constellation dashboard + full ShadowGuard crisis
-   redirect. Deferred M4 follow-ons: red-thread API endpoint + archetype Integration Score.
+1. Begin Milestone 5 (The Mirror): Constellation dashboard (Radar of the 4 functions +
+   archetype network) and full ShadowGuard crisis redirect (psychosis/self-harm →
+   grounding exercises → real medical resources).
+2. Deferred M4 follow-ons: red-thread API endpoint + archetype Integration Score; revisit
+   filtered-ANN (`userId` + HNSW) performance as entry volume grows.
 3. (Owner) delete the temporary `docs/` export folder once satisfied with the converted
    notes — it is gitignored and will not be committed.
 
