@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI, Schema } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { IAIEngineAdapter } from "../adapter.interface";
 import { TJungianAnalysis, JungianAnalysisSchema } from "../../validations/analysis";
+import { EMBEDDING_DIM } from "../../vector/constants";
 
 // Local schema type mapping to bypass import constraints during testing
 const Type = {
@@ -103,13 +105,73 @@ const GEMINI_RESPONSE_SCHEMA: Schema = {
 
 export class GeminiAdapter implements IAIEngineAdapter {
   private genAI: GoogleGenerativeAI | null = null;
+  private genAIEmbed: GoogleGenAI | null = null;
   private modelName = "gemini-1.5-pro";
+  private embedModelName = "gemini-embedding-001";
 
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY;
     if (apiKey && !apiKey.includes("mock") && process.env.NODE_ENV !== "test") {
       this.genAI = new GoogleGenerativeAI(apiKey);
+      // Embeddings use the newer @google/genai SDK, which supports outputDimensionality
+      // (required to produce 1536-dim vectors matching the JournalEntry.embedding column).
+      this.genAIEmbed = new GoogleGenAI({ apiKey });
     }
+  }
+
+  /**
+   * Vectorizes text into a 1536-dim embedding for similarity search ("The Red Thread").
+   * Falls back to a deterministic, network-free mock in test/mock mode.
+   */
+  async embed(text: string): Promise<number[]> {
+    if (!this.genAIEmbed) {
+      return this.generateMockEmbedding(text);
+    }
+
+    const response = await this.genAIEmbed.models.embedContent({
+      model: this.embedModelName,
+      contents: text,
+      config: { outputDimensionality: EMBEDDING_DIM },
+    });
+
+    const values = response.embeddings?.[0]?.values;
+    if (!values || values.length !== EMBEDDING_DIM) {
+      throw new Error(
+        `Embedding provider returned ${values?.length ?? 0} dimensions, expected ${EMBEDDING_DIM}.`
+      );
+    }
+    return values;
+  }
+
+  /**
+   * Deterministic unit-norm pseudo-embedding derived from the input text. Same text →
+   * same vector, so similarity tests are stable without a network call.
+   */
+  private generateMockEmbedding(text: string): number[] {
+    let seed = 2166136261 >>> 0; // FNV-ish seed
+    for (let i = 0; i < text.length; i++) {
+      seed = (seed ^ text.charCodeAt(i)) >>> 0;
+      seed = Math.imul(seed, 16777619) >>> 0;
+    }
+    let state = seed || 1;
+    const next = (): number => {
+      // Linear congruential generator → [0, 1)
+      state = (Math.imul(1103515245, state) + 12345) >>> 0;
+      return state / 0x100000000;
+    };
+
+    const vec = new Array<number>(EMBEDDING_DIM);
+    let norm = 0;
+    for (let i = 0; i < EMBEDDING_DIM; i++) {
+      const v = next() * 2 - 1;
+      vec[i] = v;
+      norm += v * v;
+    }
+    norm = Math.sqrt(norm) || 1;
+    for (let i = 0; i < EMBEDDING_DIM; i++) {
+      vec[i] /= norm;
+    }
+    return vec;
   }
 
   async analyze(text: string): Promise<TJungianAnalysis> {

@@ -103,6 +103,7 @@ describe("Milestone 3 - Safety Shield & Pluggable AI Integration Suite", () => {
             crisis_flag: false,
           };
         },
+        embed: async () => new Array(1536).fill(0),
       };
 
       // Both adapters must be callable identical to each other using the interface contract

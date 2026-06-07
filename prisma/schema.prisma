@@ -69,7 +69,10 @@ model UserSnapshot {
 
   tensionIndex          Decimal  @db.Decimal(4, 3) // 0.000 to 1.000 (Global psychic conflict)
   shadowScore           Decimal  @db.Decimal(4, 3) // 0.000 to 1.000 (Level of shadow awareness)
-  
+
+  // User's IANA timezone (resolved from personaMask) at record time, so the dashboard can
+  // bucket time-series by the user's local day instead of blindly trusting server UTC.
+  timezone              String   @default("UTC")
   recordedAt            DateTime @default(now())
 
   @@index([userId, recordedAt])

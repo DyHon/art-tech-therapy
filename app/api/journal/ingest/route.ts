@@ -10,6 +10,8 @@ import { encrypt } from "@/lib/security/encryption";
 import { GeminiAdapter } from "@/lib/ai/adapters/gemini.adapter";
 import { IAIEngineAdapter } from "@/lib/ai/adapter.interface";
 import { TJungianAnalysis } from "@/lib/validations/analysis";
+import { persistEmbedding } from "@/lib/vector/red-thread";
+import { getUserTimezone } from "@/lib/timezone";
 
 // Zod schema for direct text entries
 const TextEntrySchema = z.object({
@@ -44,6 +46,7 @@ async function persistJournalAndSnapshot(
   }
   
   const userId = user.id;
+  const timezone = getUserTimezone(user.personaMask);
   const contentEncrypted = encrypt(cleanTranscript);
 
   // 2. Create the Journal Entry along with its archetypal tags relational mappings
@@ -76,7 +79,8 @@ async function persistJournalAndSnapshot(
       userId,
       psychologicalFunctions: analysis.psychic_tension.function_ratios as any,
       tensionIndex: analysis.psychic_tension.tension_score,
-      shadowScore: shadowScore
+      shadowScore: shadowScore,
+      timezone // PROCESS 4.5: localized tz, not blind server UTC
     }
   });
 
@@ -130,6 +134,10 @@ export async function POST(req: NextRequest) {
 
       // Save complete high-fidelity analytical results to relational database
       const { entryId } = await persistJournalAndSnapshot(clean_transcript, entryType, analysis);
+
+      // M4 (The Red Thread): vectorize and persist the embedding BEFORE the ZDR purge,
+      // via the adapter (Interface Rule — no direct embedding client in the route).
+      await persistEmbedding(entryId, await aiEngine.embed(clean_transcript));
 
       return NextResponse.json({
         success: true,
@@ -202,6 +210,10 @@ export async function POST(req: NextRequest) {
 
       // Persist results securely
       const { entryId } = await persistJournalAndSnapshot(clean_transcript, entryType, analysis);
+
+      // M4 (The Red Thread): vectorize and persist the embedding BEFORE the ZDR purge,
+      // via the adapter (Interface Rule — no direct embedding client in the route).
+      await persistEmbedding(entryId, await aiEngine.embed(clean_transcript));
 
       return NextResponse.json({
         success: true,

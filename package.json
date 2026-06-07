@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/genai": "^2.8.0",
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.19.3",
     "fluent-ffmpeg": "^2.1.3",
