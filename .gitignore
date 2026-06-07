@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Obsidian per-user vault state (workspace, themes, local app settings)
+vault/.obsidian/
+
+# Temporary Google Docs export (.docx) — migrated/translated into vault/Knowledge/
+/docs/
