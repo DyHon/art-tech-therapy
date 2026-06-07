@@ -2,9 +2,10 @@
 _Last updated: 2026-06-07 (session: encryption-hardening-vault-setup)_
 
 ## Current focus
-Milestone 5 (The Mirror) **in progress**. 5A (`/safety` crisis route) and 5B (Zod-validated
-read APIs for the dashboard) are done & verified live. Next: 5C Constellation dashboard
-(lock charting lib — visx vs Recharts) → 5D aesthetic. M1–M4 complete and verified.
+Milestone 5 (The Mirror) **in progress**. 5A, 5B done & verified. 5C dashboard underway
+(visx): slice 1 — Function Radar at `/dashboard` — done & rendering real data. Next: 5C
+slice 2 (tension/shadow trend) + slice 3 (archetype constellation) → 5D aesthetic.
+M1–M4 complete & verified.
 
 ## Progress / where things stand
 - M1 Database ✅ — Prisma + Postgres, pgvector ext enabled. Schema has
@@ -33,9 +34,9 @@ read APIs for the dashboard) are done & verified live. Next: 5C Constellation da
   dashboard + full ShadowGuard crisis redirect).
 
 ## Next steps
-1. M5 continues: 5C — Constellation dashboard (lock charting lib: visx vs Recharts; Radar
-   + tension/shadow trend + archetype map) → 5D dream-state aesthetic. 5A (/safety) ✅,
-   5B (read APIs) ✅.
+1. M5 continues: 5C dashboard (visx) — slice 1 Function Radar ✅; next slice 2
+   tension/shadow trend, slice 3 archetype constellation → 5D aesthetic. 5A ✅, 5B ✅.
+   (visx needs `.npmrc` legacy-peer-deps for React 19.)
 2. Deferred M4 follow-ons: red-thread API endpoint + archetype Integration Score; revisit
    filtered-ANN (`userId` + HNSW) performance as entry volume grows.
 3. (Owner) delete the temporary `docs/` export folder once satisfied with the converted
