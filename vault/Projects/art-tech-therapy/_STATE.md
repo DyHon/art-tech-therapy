@@ -3,8 +3,8 @@ _Last updated: 2026-06-07 (session: encryption-hardening-vault-setup)_
 
 ## Current focus
 Milestone 5 (The Mirror) **in progress**. 5A, 5B done & verified. 5C dashboard underway
-(visx): slice 1 — Function Radar at `/dashboard` — done & rendering real data. Next: 5C
-slice 2 (tension/shadow trend) + slice 3 (archetype constellation) → 5D aesthetic.
+(visx): slices 1–2 — Function Radar + Tension/Shadow trend at `/dashboard` — done &
+rendering real data. Next: 5C slice 3 (archetype constellation) → 5D aesthetic.
 M1–M4 complete & verified.
 
 ## Progress / where things stand
@@ -34,9 +34,10 @@ M1–M4 complete & verified.
   dashboard + full ShadowGuard crisis redirect).
 
 ## Next steps
-1. M5 continues: 5C dashboard (visx) — slice 1 Function Radar ✅; next slice 2
-   tension/shadow trend, slice 3 archetype constellation → 5D aesthetic. 5A ✅, 5B ✅.
-   (visx needs `.npmrc` legacy-peer-deps for React 19.)
+1. M5 continues: 5C dashboard (visx) — slices 1–2 ✅ (Function Radar + Tension/Shadow
+   trend); next slice 3 archetype constellation → 5D aesthetic. 5A ✅, 5B ✅.
+   (visx needs `.npmrc` legacy-peer-deps for React 19. Trend x-axis: same-day ticks repeat
+   — show time on same-day in 5D polish.)
 2. Deferred M4 follow-ons: red-thread API endpoint + archetype Integration Score; revisit
    filtered-ANN (`userId` + HNSW) performance as entry volume grows.
 3. (Owner) delete the temporary `docs/` export folder once satisfied with the converted

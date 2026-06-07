@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { resolveCurrentUserId } from "@/lib/user/current-user";
 import { getSnapshotSeries } from "@/lib/dashboard/queries";
 import { FunctionRadar } from "@/components/dashboard/FunctionRadar";
+import { TensionTrend } from "@/components/dashboard/TensionTrend";
 
 // Reads live DB state per request — never prerender at build time.
 export const dynamic = "force-dynamic";
@@ -51,6 +52,18 @@ export default async function DashboardPage() {
             <p className="mt-6 text-xs text-slate-400">
               {snapshots.length} reflection{snapshots.length === 1 ? "" : "s"} recorded · timezone {latest.timezone}
             </p>
+          </section>
+        )}
+
+        {latest && (
+          <section className="rounded-3xl bg-white/70 p-8 shadow-sm ring-1 ring-slate-200/70 dark:bg-slate-900/50 dark:ring-slate-800">
+            <h2 className="mb-1 text-lg font-medium text-slate-700 dark:text-slate-200">
+              Tension &amp; shadow over time
+            </h2>
+            <p className="mb-6 text-sm text-slate-400">
+              How your psychic tension and shadow awareness move across reflections.
+            </p>
+            <TensionTrend points={snapshots} />
           </section>
         )}
       </div>
