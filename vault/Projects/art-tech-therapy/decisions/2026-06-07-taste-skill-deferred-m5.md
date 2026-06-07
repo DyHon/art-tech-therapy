@@ -1,7 +1,7 @@
 # Adopt taste-skill for UI, deferred to M5 (stub)
 
 - Date: 2026-06-07 (ADR authoring date)
-- Status: proposed — **deferred to M5**; not adopted, no code changed. Owner to confirm at M5.
+- Status: accepted — adopted at M5 (2026-06-07).
 
 ## Context
 Researched `leonxlnx/taste-skill` (MIT, ~35.7k★) at owner request before M4. It is an
@@ -10,7 +10,7 @@ targets Tailwind + Framer Motion + GSAP — our exact stack (CLAUDE.md §1) and 
 UI goal. Full evaluation: [[taste-skill-frontend]]. We are currently mid-M4 (pgvector
 backend, no UI surface), so there is no payoff to adopting now.
 
-## Decision (proposed)
+## Decision
 Park as a WATCH candidate; revisit at **M5 — "The Mirror" dashboard**. When adopted: vendor
 only the `soft-skill` and/or `minimalist-skill` `SKILL.md` file(s) into the repo (not the full
 `npx skills add` set), keep `MOTION_INTENSITY` low for a calming therapeutic tone, and use its
@@ -27,6 +27,7 @@ only the `soft-skill` and/or `minimalist-skill` `SKILL.md` file(s) into the repo
   verifiable, stack-matched checklist on top.
 
 ## Consequences
-- No change to the codebase or M4 plan now; `_STATE.md` carries a pointer for M5.
-- At M5, this stub gets promoted to an accepted ADR (or rejected) once a variant is chosen.
+- **Adopted at M5:** vendored `soft-skill` + `minimalist-skill` `SKILL.md` into
+  `design/taste-skill/` (MIT, attributed) and applied soft/minimalist + low-motion
+  principles across the M5 UI (landing, `/journal`, `/dashboard`, `/safety`).
 - Compliance unaffected: presentation layer only; never touches `/lib/security` or ZDR/PII.

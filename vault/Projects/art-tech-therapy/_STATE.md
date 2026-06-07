@@ -2,11 +2,11 @@
 _Last updated: 2026-06-07 (session: encryption-hardening-vault-setup)_
 
 ## Current focus
-Milestone 5 (The Mirror) **in progress**. 5A, 5B done & verified. 5C dashboard underway
-(visx): 5C dashboard done (Radar, Tension/Shadow trend, force-directed Archetype
-Constellation at `/dashboard`). Journaling page `/journal` ("The Mirror") done — composer
-+ **crisis→/safety redirect verified live** + mirror reflection + graceful error state.
-Next: landing/home + nav, then 5D aesthetic polish. M1–M4 complete & verified.
+**Milestone 5 (The Mirror) COMPLETE → MVP done (M1–M5), released as v0.2.0.** Landing +
+nav, journaling (`/journal`), the Constellation dashboard (`/dashboard`: Radar +
+Tension/Shadow trend + d3-force Archetype graph), and the `/safety` crisis route — all
+live and rendering real Gemini data. taste-skill (soft/minimalist) vendored + ADR accepted.
+Public on GitHub. Next: optional post-MVP — auth, deploy, richer features.
 
 ## Progress / where things stand
 - M1 Database ✅ — Prisma + Postgres, pgvector ext enabled. Schema has
@@ -17,11 +17,11 @@ Next: landing/home + nav, then 5D aesthetic polish. M1–M4 complete & verified.
   double medical-redline (prompt + `sanitizeClinicalTerms`).
 - Security hardening ✅ (this session) — encryption now fail-fast on missing
   `ENCRYPTION_KEY`; `decrypt` throws instead of silently returning ciphertext.
-- Tests: 27/27 passing; `tsc --noEmit` clean; `next build` clean.
-- M5a ✅ — `/safety` route + `BreathingGuide` (Framer Motion, reduced-motion aware) +
-  `lib/safety/crisis-resources.ts`. Client redirect to /safety still to wire (needs the
-  journaling UI). Aesthetic: soft/minimalist + Framer Motion adopted (taste-skill SKILL.md
-  not yet vendored).
+- Tests: 38/38 passing; `tsc --noEmit` clean; `next build` clean.
+- M5 UI ✅ — landing + `SiteNav`; `/journal` composer (crisis→/safety redirect verified);
+  `/dashboard` (visx Radar + Trend + d3-force Constellation, polished labels/ticks);
+  `/safety` (BreathingGuide, reduced-motion aware). taste-skill vendored to
+  `design/taste-skill/`, ADR accepted.
 - M5b ✅ — read layer: `lib/dashboard/` (snapshot series + pure archetype aggregation),
   `lib/vector/red-thread.ts` related-entries, and Zod-validated `GET /api/dashboard` +
   `GET /api/journal/[id]/related`. Verified live against Postgres.
@@ -34,16 +34,15 @@ Next: landing/home + nav, then 5D aesthetic polish. M1–M4 complete & verified.
   models, rationale notes). The full roadmap has **5 milestones** (M5 = The Mirror
   dashboard + full ShadowGuard crisis redirect).
 
-## Next steps
-1. M5: 5A/5B/5C ✅ + journaling page `/journal` ✅ (crisis→/safety redirect verified).
-   Next: **landing/home page + nav** linking `/`, `/journal`, `/dashboard` (home is still
-   create-next-app boilerplate); then **5D polish** — vendor taste-skill SKILL.md + promote
-   its ADR, fix archetype label-overlap for long names, same-day x-axis ticks.
-   (visx needs `.npmrc` legacy-peer-deps for React 19.)
-2. Deferred M4 follow-ons: red-thread API endpoint + archetype Integration Score; revisit
-   filtered-ANN (`userId` + HNSW) performance as entry volume grows.
-3. (Owner) delete the temporary `docs/` export folder once satisfied with the converted
-   notes — it is gitignored and will not be committed.
+## Next steps (post-MVP, optional)
+1. **Auth** — reads currently resolve a single seed user (`findFirst`); add real
+   accounts/sessions before multi-user use.
+2. **Deploy** — Vercel + a hosted Postgres with pgvector; set `ENCRYPTION_KEY` /
+   `GEMINI_API_KEY` / `DATABASE_URL` as env secrets.
+3. **Richer features** — archetype Integration Score, a red-thread "related entries" UI on
+   the dashboard, audio journaling in the UI; revisit filtered-ANN perf as data grows.
+4. (Owner) delete the temporary `docs/` export folder (gitignored).
+   Note: free-tier Gemini rate-limits under rapid use — space out ingests or upgrade tier.
 
 ## Blockers / open questions
 - Policy tension: ingest route persists `contentEncrypted` (encrypted raw transcript),
@@ -63,5 +62,5 @@ Next: landing/home + nav, then 5D aesthetic polish. M1–M4 complete & verified.
 - [[architecture-vision]] · [[feasibility-report]] · [[roadmap-5-milestones]] (design docs)
 - [[watch-list-tools-to-evaluate]] (third-party tools/repos to consider integrating)
 - [[taste-skill-frontend]] / [[2026-06-07-taste-skill-deferred-m5]] — UI design skill,
-  evaluated 2026-06-07, parked for M5 (not adopted now)
+  **adopted at M5**; vendored to `design/taste-skill/`
 - [[_migrated-from-google-docs]] (conversion index)

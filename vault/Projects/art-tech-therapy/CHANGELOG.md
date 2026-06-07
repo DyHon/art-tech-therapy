@@ -6,7 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-07 — MVP (Milestones 1–5)
+
 ### Added
+- **Milestone 5c — Constellation dashboard (`/dashboard`):** a visx Function Radar, a
+  Tension/Shadow trend chart, and a d3-force Archetype Constellation, reading the 5B layer.
+- **Journaling page (`/journal`, "The Mirror"):** a composer that ingests entries, reflects
+  the Jungian analysis back, and redirects to `/safety` on a crisis flag.
+- **Landing page + site nav** tying `/`, `/journal`, and `/dashboard` together.
+- **Design:** vendored the taste-skill `soft`/`minimalist` `SKILL.md` (MIT) to
+  `design/taste-skill/` as a UI design-review reference.
 - **Milestone 5a — `/safety` crisis route:** the ShadowGuard redirect destination, with
   grounding exercises (breathing + 5-4-3-2-1) and curated crisis support resources;
   soft/minimalist UI with Framer Motion (reduced-motion aware).
