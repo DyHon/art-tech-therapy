@@ -12,7 +12,7 @@
 - **Styling:** Tailwind CSS + Framer Motion (for "dream-state" UI).
 - **Database:** PostgreSQL with `pgvector` extension enabled.
 - **ORM:** Prisma.
-- **AI/LLM:** Google Gemini 1.5 Pro (for symbolic extraction) & Whisper (for ASR).
+- **AI/LLM:** Google Gemini — `gemini-2.5-flash` for symbolic extraction, `gemini-embedding-001` (@1536) for vectors — & Whisper (for ASR). _(Note: the original `gemini-1.5-pro` was retired by Google; swap the model id in `GeminiAdapter` to change models.)_
 - **Validation:** Zod (mandatory for all API payloads and AI outputs).
 
 ## 2. WORKFLOW & ARCHITECTURE

@@ -106,7 +106,7 @@ const GEMINI_RESPONSE_SCHEMA: Schema = {
 export class GeminiAdapter implements IAIEngineAdapter {
   private genAI: GoogleGenerativeAI | null = null;
   private genAIEmbed: GoogleGenAI | null = null;
-  private modelName = "gemini-1.5-pro";
+  private modelName = "gemini-2.5-flash";
   private embedModelName = "gemini-embedding-001";
 
   constructor() {
