@@ -3,9 +3,10 @@ _Last updated: 2026-06-07 (session: encryption-hardening-vault-setup)_
 
 ## Current focus
 Milestone 5 (The Mirror) **in progress**. 5A, 5B done & verified. 5C dashboard underway
-(visx): 5C dashboard **core done** — Function Radar, Tension/Shadow trend, and
-force-directed Archetype Constellation at `/dashboard`, all rendering real data. Next: 5D
-aesthetic polish + wiring the client redirect to /safety. M1–M4 complete & verified.
+(visx): 5C dashboard done (Radar, Tension/Shadow trend, force-directed Archetype
+Constellation at `/dashboard`). Journaling page `/journal` ("The Mirror") done — composer
++ **crisis→/safety redirect verified live** + mirror reflection + graceful error state.
+Next: landing/home + nav, then 5D aesthetic polish. M1–M4 complete & verified.
 
 ## Progress / where things stand
 - M1 Database ✅ — Prisma + Postgres, pgvector ext enabled. Schema has
@@ -34,10 +35,11 @@ aesthetic polish + wiring the client redirect to /safety. M1–M4 complete & ver
   dashboard + full ShadowGuard crisis redirect).
 
 ## Next steps
-1. M5 5C dashboard ✅ (3 panels: Radar, Trend, Constellation). Next: **5D aesthetic
-   polish** — vendor taste-skill SKILL.md + promote its ADR; wire the client redirect to
-   /safety from a journaling UI; fix dashboard label-overlap for long archetype names and
-   same-day x-axis ticks. 5A ✅, 5B ✅. (visx needs `.npmrc` legacy-peer-deps for React 19.)
+1. M5: 5A/5B/5C ✅ + journaling page `/journal` ✅ (crisis→/safety redirect verified).
+   Next: **landing/home page + nav** linking `/`, `/journal`, `/dashboard` (home is still
+   create-next-app boilerplate); then **5D polish** — vendor taste-skill SKILL.md + promote
+   its ADR, fix archetype label-overlap for long names, same-day x-axis ticks.
+   (visx needs `.npmrc` legacy-peer-deps for React 19.)
 2. Deferred M4 follow-ons: red-thread API endpoint + archetype Integration Score; revisit
    filtered-ANN (`userId` + HNSW) performance as entry volume grows.
 3. (Owner) delete the temporary `docs/` export folder once satisfied with the converted
