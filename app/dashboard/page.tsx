@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { resolveCurrentUserId } from "@/lib/user/current-user";
-import { getSnapshotSeries } from "@/lib/dashboard/queries";
+import { getSnapshotSeries, getArchetypeSummary } from "@/lib/dashboard/queries";
 import { FunctionRadar } from "@/components/dashboard/FunctionRadar";
 import { TensionTrend } from "@/components/dashboard/TensionTrend";
+import { ArchetypeConstellation } from "@/components/dashboard/ArchetypeConstellation";
+import type { TSnapshotPoint, TArchetypeSummary } from "@/lib/validations/dashboard";
 
 // Reads live DB state per request — never prerender at build time.
 export const dynamic = "force-dynamic";
@@ -14,7 +16,14 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const userId = await resolveCurrentUserId();
-  const snapshots = userId ? await getSnapshotSeries(userId) : [];
+  let snapshots: TSnapshotPoint[] = [];
+  let archetypes: TArchetypeSummary[] = [];
+  if (userId) {
+    [snapshots, archetypes] = await Promise.all([
+      getSnapshotSeries(userId),
+      getArchetypeSummary(userId),
+    ]);
+  }
   const latest = snapshots.at(-1);
 
   return (
@@ -64,6 +73,19 @@ export default async function DashboardPage() {
               How your psychic tension and shadow awareness move across reflections.
             </p>
             <TensionTrend points={snapshots} />
+          </section>
+        )}
+
+        {latest && (
+          <section className="rounded-3xl bg-white/70 p-8 shadow-sm ring-1 ring-slate-200/70 dark:bg-slate-900/50 dark:ring-slate-800">
+            <h2 className="mb-1 text-lg font-medium text-slate-700 dark:text-slate-200">
+              Archetype constellation
+            </h2>
+            <p className="mb-6 text-sm text-slate-400">
+              The figures the Alchemist has found in your psyche — larger means more frequent,
+              brighter means more integrated.
+            </p>
+            <ArchetypeConstellation archetypes={archetypes} />
           </section>
         )}
       </div>
