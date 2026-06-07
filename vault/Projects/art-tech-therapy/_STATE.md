@@ -2,10 +2,9 @@
 _Last updated: 2026-06-07 (session: encryption-hardening-vault-setup)_
 
 ## Current focus
-Milestone 5 (The Mirror) **in progress**. 5A done: the `/safety` crisis route (ShadowGuard's
-redirect destination) now exists with grounding + verified support resources, built
-soft/minimalist with Framer Motion. Next: 5B read APIs → 5C Constellation dashboard
-(charting lib TBD, leaning visx) → 5D aesthetic. M1–M4 complete and verified.
+Milestone 5 (The Mirror) **in progress**. 5A (`/safety` crisis route) and 5B (Zod-validated
+read APIs for the dashboard) are done & verified live. Next: 5C Constellation dashboard
+(lock charting lib — visx vs Recharts) → 5D aesthetic. M1–M4 complete and verified.
 
 ## Progress / where things stand
 - M1 Database ✅ — Prisma + Postgres, pgvector ext enabled. Schema has
@@ -21,6 +20,9 @@ soft/minimalist with Framer Motion. Next: 5B read APIs → 5C Constellation dash
   `lib/safety/crisis-resources.ts`. Client redirect to /safety still to wire (needs the
   journaling UI). Aesthetic: soft/minimalist + Framer Motion adopted (taste-skill SKILL.md
   not yet vendored).
+- M5b ✅ — read layer: `lib/dashboard/` (snapshot series + pure archetype aggregation),
+  `lib/vector/red-thread.ts` related-entries, and Zod-validated `GET /api/dashboard` +
+  `GET /api/journal/[id]/related`. Verified live against Postgres.
 - M4 core ✅ (this session) — `adapter.embed()` (Gemini `gemini-embedding-001` @1536 via
   `@google/genai`), `persistEmbedding` / `findSimilarEntries` ($queryRaw + HNSW cosine),
   migration `20260607120000_m4_red_thread` (HNSW index + `UserSnapshot.timezone`).
@@ -31,9 +33,9 @@ soft/minimalist with Framer Motion. Next: 5B read APIs → 5C Constellation dash
   dashboard + full ShadowGuard crisis redirect).
 
 ## Next steps
-1. M5 continues: 5B — Zod-validated read APIs (snapshot time-series, archetype
-   frequency/integration, Red-Thread related entries) → 5C Constellation dashboard
-   (charting lib TBD, leaning visx) → 5D dream-state aesthetic. 5A (/safety) ✅ done.
+1. M5 continues: 5C — Constellation dashboard (lock charting lib: visx vs Recharts; Radar
+   + tension/shadow trend + archetype map) → 5D dream-state aesthetic. 5A (/safety) ✅,
+   5B (read APIs) ✅.
 2. Deferred M4 follow-ons: red-thread API endpoint + archetype Integration Score; revisit
    filtered-ANN (`userId` + HNSW) performance as entry volume grows.
 3. (Owner) delete the temporary `docs/` export folder once satisfied with the converted
