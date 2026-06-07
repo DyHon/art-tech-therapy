@@ -1,5 +1,5 @@
 # Current State — art-tech-therapy
-_Last updated: 2026-06-07 (session: encryption-hardening-vault-setup)_
+_Last updated: 2026-06-07 (session: onboarding→MVP / v0.2.0)_
 
 ## Current focus
 **Milestone 5 (The Mirror) COMPLETE → MVP done (M1–M5), released as v0.2.0.** Landing +
@@ -56,8 +56,10 @@ Public on GitHub. Next: optional post-MVP — auth, deploy, richer features.
   `gemini-2.5-flash`. Full M3→M4→M5 pipeline verified live with real analysis + embeddings.
 
 ## Key references
-- [[2026-06-07-aes256gcm-failfast-key]] · [[2026-06-07-embedding-provider-hnsw]] (decisions)
-- [[2026-06-07-encryption-hardening-vault-setup]] (session)
+- Decisions: [[2026-06-07-aes256gcm-failfast-key]] · [[2026-06-07-embedding-provider-hnsw]] ·
+  [[2026-06-07-analysis-reliability-no-silent-mock]] · [[2026-06-07-charting-visx-d3force]] ·
+  [[2026-06-07-pluggable-ai-adapter]] · [[2026-06-07-immutable-usersnapshot]]
+- [[2026-06-07-encryption-hardening-vault-setup]] (session — full MVP arc)
 - Governance chain: POLICIES.md > CLAUDE.md > PROCESS.md > PERSONAS.md
 - [[architecture-vision]] · [[feasibility-report]] · [[roadmap-5-milestones]] (design docs)
 - [[watch-list-tools-to-evaluate]] (third-party tools/repos to consider integrating)
