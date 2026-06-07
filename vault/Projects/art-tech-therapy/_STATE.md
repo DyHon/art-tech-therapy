@@ -2,9 +2,10 @@
 _Last updated: 2026-06-07 (session: encryption-hardening-vault-setup)_
 
 ## Current focus
-Milestone 4 ("The Red Thread") core is complete and **verified live** (real Gemini
-embeddings, HNSW search, migration applied). Next: Milestone 5 (The Mirror) — Constellation
-dashboard + full ShadowGuard crisis redirect.
+Milestone 5 (The Mirror) **in progress**. 5A done: the `/safety` crisis route (ShadowGuard's
+redirect destination) now exists with grounding + verified support resources, built
+soft/minimalist with Framer Motion. Next: 5B read APIs → 5C Constellation dashboard
+(charting lib TBD, leaning visx) → 5D aesthetic. M1–M4 complete and verified.
 
 ## Progress / where things stand
 - M1 Database ✅ — Prisma + Postgres, pgvector ext enabled. Schema has
@@ -15,7 +16,11 @@ dashboard + full ShadowGuard crisis redirect.
   double medical-redline (prompt + `sanitizeClinicalTerms`).
 - Security hardening ✅ (this session) — encryption now fail-fast on missing
   `ENCRYPTION_KEY`; `decrypt` throws instead of silently returning ciphertext.
-- Tests: 23/23 passing; `tsc --noEmit` clean; `prisma validate` clean.
+- Tests: 27/27 passing; `tsc --noEmit` clean; `next build` clean.
+- M5a ✅ — `/safety` route + `BreathingGuide` (Framer Motion, reduced-motion aware) +
+  `lib/safety/crisis-resources.ts`. Client redirect to /safety still to wire (needs the
+  journaling UI). Aesthetic: soft/minimalist + Framer Motion adopted (taste-skill SKILL.md
+  not yet vendored).
 - M4 core ✅ (this session) — `adapter.embed()` (Gemini `gemini-embedding-001` @1536 via
   `@google/genai`), `persistEmbedding` / `findSimilarEntries` ($queryRaw + HNSW cosine),
   migration `20260607120000_m4_red_thread` (HNSW index + `UserSnapshot.timezone`).
@@ -26,9 +31,9 @@ dashboard + full ShadowGuard crisis redirect.
   dashboard + full ShadowGuard crisis redirect).
 
 ## Next steps
-1. Begin Milestone 5 (The Mirror): Constellation dashboard (Radar of the 4 functions +
-   archetype network) and full ShadowGuard crisis redirect (psychosis/self-harm →
-   grounding exercises → real medical resources).
+1. M5 continues: 5B — Zod-validated read APIs (snapshot time-series, archetype
+   frequency/integration, Red-Thread related entries) → 5C Constellation dashboard
+   (charting lib TBD, leaning visx) → 5D dream-state aesthetic. 5A (/safety) ✅ done.
 2. Deferred M4 follow-ons: red-thread API endpoint + archetype Integration Score; revisit
    filtered-ANN (`userId` + HNSW) performance as entry volume grows.
 3. (Owner) delete the temporary `docs/` export folder once satisfied with the converted

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Milestone 5a — `/safety` crisis route:** the ShadowGuard redirect destination, with
+  grounding exercises (breathing + 5-4-3-2-1) and curated crisis support resources;
+  soft/minimalist UI with Framer Motion (reduced-motion aware).
 - **Milestone 4 — The Red Thread (core):** `IAIEngineAdapter.embed()` (Gemini
   `gemini-embedding-001` @1536 via `@google/genai`), `persistEmbedding` /
   `findSimilarEntries` (raw-SQL cosine search), HNSW index `idx_journal_entry_vector_hnsw`,
