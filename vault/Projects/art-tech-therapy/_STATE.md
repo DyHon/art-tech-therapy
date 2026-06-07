@@ -14,17 +14,22 @@ next action is to draft the M4 implementation plan for approval.
   double medical-redline (prompt + `sanitizeClinicalTerms`).
 - Security hardening ✅ (this session) — encryption now fail-fast on missing
   `ENCRYPTION_KEY`; `decrypt` throws instead of silently returning ciphertext.
-- Tests: 13/13 passing; `tsc --noEmit` clean.
+- Tests: 23/23 passing; `tsc --noEmit` clean; `prisma validate` clean.
+- M4 core ✅ (this session) — `adapter.embed()` (Gemini `gemini-embedding-001` @1536 via
+  `@google/genai`), `persistEmbedding` / `findSimilarEntries` ($queryRaw + HNSW cosine),
+  migration `20260607120000_m4_red_thread` (HNSW index + `UserSnapshot.timezone`).
+  **Migration not yet applied; live embedding not yet smoke-tested.**
 - Docs migration ✅ — 9 Vietnamese Google Docs exported to `.docx` and translated to
   English Markdown in `vault/Knowledge/` (feasibility report, 5-milestone roadmap, data
   models, rationale notes). The full roadmap has **5 milestones** (M5 = The Mirror
   dashboard + full ShadowGuard crisis redirect).
 
 ## Next steps
-1. Draft M4 plan: `adapter.embed()`, HNSW index `idx_journal_entry_vector_hnsw`,
-   `$queryRaw` similarity search, P95 < 150ms (per PERSONAS Guardian rules).
-2. Fold timezone-from-`User.personaMask` fix into M4 (PROCESS Step 4.5; currently
-   `UserSnapshot.recordedAt` defaults to server UTC).
+1. Apply the M4 migration (`prisma migrate deploy`) against the Docker Postgres, then
+   smoke-test the live Gemini embedding path with a real `GEMINI_API_KEY` (confirm a
+   1536-dim response) and verify HNSW search returns sane neighbours.
+2. Begin Milestone 5 (The Mirror): Constellation dashboard + full ShadowGuard crisis
+   redirect. Deferred M4 follow-ons: red-thread API endpoint + archetype Integration Score.
 3. (Owner) delete the temporary `docs/` export folder once satisfied with the converted
    notes — it is gitignored and will not be committed.
 
@@ -36,8 +41,11 @@ next action is to draft the M4 implementation plan for approval.
   as a workaround.
 
 ## Key references
-- [[2026-06-07-aes256gcm-failfast-key]] (decision)
+- [[2026-06-07-aes256gcm-failfast-key]] · [[2026-06-07-embedding-provider-hnsw]] (decisions)
 - [[2026-06-07-encryption-hardening-vault-setup]] (session)
 - Governance chain: POLICIES.md > CLAUDE.md > PROCESS.md > PERSONAS.md
 - [[architecture-vision]] · [[feasibility-report]] · [[roadmap-5-milestones]] (design docs)
+- [[watch-list-tools-to-evaluate]] (third-party tools/repos to consider integrating)
+- [[taste-skill-frontend]] / [[2026-06-07-taste-skill-deferred-m5]] — UI design skill,
+  evaluated 2026-06-07, parked for M5 (not adopted now)
 - [[_migrated-from-google-docs]] (conversion index)

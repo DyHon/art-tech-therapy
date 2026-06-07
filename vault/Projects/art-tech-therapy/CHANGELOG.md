@@ -7,8 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Milestone 4 — The Red Thread (core):** `IAIEngineAdapter.embed()` (Gemini
+  `gemini-embedding-001` @1536 via `@google/genai`), `persistEmbedding` /
+  `findSimilarEntries` (raw-SQL cosine search), HNSW index `idx_journal_entry_vector_hnsw`,
+  and `UserSnapshot.timezone` (localized snapshots, PROCESS 4.5). Migration
+  `20260607120000_m4_red_thread` (apply with `prisma migrate deploy`).
 - Obsidian vault as persistent cross-session memory (`vault/`), with `_STATE.md`,
   session logs, ADRs, Knowledge notes, and a `/save` command.
+- Project design docs translated from Vietnamese Google Docs into English
+  `vault/Knowledge/` notes.
 
 ### Changed
 - Governance: added a precedence chain (POLICIES > CLAUDE > PROCESS > PERSONAS) and a
