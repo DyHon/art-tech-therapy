@@ -28,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Karpathy-inspired Engineering Discipline section to `CLAUDE.md`.
 
 ### Fixed
+- **Analysis reliability (`GeminiAdapter`):** retries transient Gemini errors (429/500/503,
+  exponential backoff) and now **surfaces** failures instead of silently returning mock
+  analysis; updated the model from the retired `gemini-1.5-pro` to `gemini-2.5-flash`.
 - **Encryption hardening (`lib/security/encryption.ts`):** removed the hardcoded
   fallback key (now fails fast when `ENCRYPTION_KEY` is unset); `decrypt` now throws on
   malformed/forged input instead of silently returning the ciphertext.

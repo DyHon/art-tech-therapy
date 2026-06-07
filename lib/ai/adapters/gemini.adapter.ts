@@ -3,6 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 import { IAIEngineAdapter } from "../adapter.interface";
 import { TJungianAnalysis, JungianAnalysisSchema } from "../../validations/analysis";
 import { EMBEDDING_DIM } from "../../vector/constants";
+import { errorStatus, isRetryableStatus, backoffMs } from "../retry";
 
 // Local schema type mapping to bypass import constraints during testing
 const Type = {
@@ -175,43 +176,60 @@ export class GeminiAdapter implements IAIEngineAdapter {
   }
 
   async analyze(text: string): Promise<TJungianAnalysis> {
-    // If in test mode, mock mode, or missing API Key, return high-fidelity Jungian mocks
+    // Explicit mock mode: no live client (test runs, or no API key configured).
     if (!this.genAI) {
-      console.log("[GEMINI_ADAPTER_MOCK] Simulating Jungian analysis.");
+      console.log("[GEMINI_ADAPTER_MOCK] No live client — using deterministic mock analysis.");
       return this.generateMockAnalysis(text);
     }
 
-    try {
-      const model = this.genAI.getGenerativeModel({
-        model: this.modelName,
-        systemInstruction: SYSTEM_PROMPT,
-      });
+    const model = this.genAI.getGenerativeModel({
+      model: this.modelName,
+      systemInstruction: SYSTEM_PROMPT,
+    });
 
-      const response = await model.generateContent({
-        contents: [{ role: "user", parts: [{ text }] }],
-        generationConfig: {
-          responseMimeType: "application/json",
-          responseSchema: GEMINI_RESPONSE_SCHEMA,
-          temperature: 0.2, // Low temp for analytical consistency
-        },
-      });
+    const maxAttempts = 3;
+    let lastError: unknown;
 
-      const resultText = response.response.text();
-      if (!resultText) {
-        throw new Error("Empty response received from Gemini API");
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const response = await model.generateContent({
+          contents: [{ role: "user", parts: [{ text }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: GEMINI_RESPONSE_SCHEMA,
+            temperature: 0.2, // Low temp for analytical consistency
+          },
+        });
+
+        const resultText = response.response.text();
+        if (!resultText) {
+          throw new Error("Empty response received from Gemini API");
+        }
+
+        const parsed = JSON.parse(resultText);
+        const validated = JungianAnalysisSchema.parse(parsed);
+        return this.sanitizeClinicalTerms(validated);
+      } catch (error) {
+        lastError = error;
+        const status = errorStatus(error);
+        if (attempt < maxAttempts && isRetryableStatus(status)) {
+          const delay = backoffMs(attempt);
+          console.warn(
+            `[GEMINI_ADAPTER_RETRY] attempt ${attempt}/${maxAttempts} failed (status ${status}); retrying in ${delay}ms`
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+        break;
       }
-
-      const parsed = JSON.parse(resultText);
-      
-      // Perform strict validation using Zod
-      const validated = JungianAnalysisSchema.parse(parsed);
-      
-      // Secondary safety check to filter clinical terms in output text just in case
-      return this.sanitizeClinicalTerms(validated);
-    } catch (error) {
-      console.error("[GEMINI_ADAPTER_ERROR] Gemini call failed, falling back to mock parser:", error);
-      return this.generateMockAnalysis(text);
     }
+
+    // Critical: do NOT silently fall back to mock analysis on a real failure. Persisting
+    // fabricated analysis as if it were genuine would corrupt the user's psychological
+    // record. Surface the error so the caller returns a failure instead of storing a lie.
+    const message = lastError instanceof Error ? lastError.message : String(lastError);
+    console.error("[GEMINI_ADAPTER_ERROR] Analysis failed after retries:", message);
+    throw new Error(`Jungian analysis failed: ${message}`);
   }
 
   /**

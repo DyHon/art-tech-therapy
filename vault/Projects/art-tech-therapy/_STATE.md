@@ -47,11 +47,10 @@ read APIs for the dashboard) are done & verified live. Next: 5C Constellation da
   encrypted raw text is in-scope for retention.
 - vitest config loading hits an ESM/CJS bug (vitest 4 / vite); test env key set inline
   as a workaround.
-- ⚠️ **Analysis adapter silently falls back to MOCK on any Gemini error** (caught in
-  `GeminiAdapter.analyze`). E2E demo exposed this: `gemini-1.5-pro` was retired (404, now
-  fixed → `gemini-2.5-flash`) and transient 503s *both* silently persisted fake analysis as
-  if real. Recommend hardening: retry/backoff + surface failure (or `crisis`-style flag)
-  instead of silently storing mock. Embeddings are unaffected (real, verified).
+- ✅ Resolved this session — analysis adapter no longer silently mocks on failure: it
+  retries transient errors (429/500/503, exp backoff) and **throws** on real failure, so
+  ingest returns an error instead of persisting fake analysis. Model fixed to
+  `gemini-2.5-flash`. Full M3→M4→M5 pipeline verified live with real analysis + embeddings.
 
 ## Key references
 - [[2026-06-07-aes256gcm-failfast-key]] · [[2026-06-07-embedding-provider-hnsw]] (decisions)
