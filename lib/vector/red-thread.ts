@@ -51,3 +51,30 @@ export async function findSimilarEntries(
     LIMIT ${k}
   `;
 }
+
+/**
+ * Reads an entry's stored embedding (and owner) back as a numeric vector. pgvector's text
+ * form `[a,b,c]` is valid JSON, so we cast to text and parse. Returns null if the entry
+ * has no embedding.
+ */
+export async function getEntryEmbedding(
+  entryId: string
+): Promise<{ userId: string; embedding: number[] } | null> {
+  const rows = await prisma.$queryRaw<{ userId: string; embedding: string | null }[]>`
+    SELECT "userId", embedding::text AS embedding FROM "JournalEntry" WHERE id = ${entryId}
+  `;
+  const row = rows[0];
+  if (!row || !row.embedding) return null;
+  return { userId: row.userId, embedding: JSON.parse(row.embedding) as number[] };
+}
+
+/**
+ * Finds entries most similar to a given entry — the user-facing "Red Thread" lookup.
+ * Scopes to the entry's owner and excludes the entry itself. Returns [] if the entry has
+ * no embedding yet.
+ */
+export async function findRelatedEntries(entryId: string, k = 5): Promise<SimilarEntry[]> {
+  const source = await getEntryEmbedding(entryId);
+  if (!source) return [];
+  return findSimilarEntries(source.userId, source.embedding, k, entryId);
+}
