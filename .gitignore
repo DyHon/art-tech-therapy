@@ -45,3 +45,6 @@ vault/.obsidian/
 
 # Temporary Google Docs export (.docx) — migrated/translated into vault/Knowledge/
 /docs/
+
+# understand anything skill result
+.understand-anything/
