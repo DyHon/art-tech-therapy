@@ -16,6 +16,9 @@ const WIDTH = 600;
 const HEIGHT = 360;
 const LABEL_PAD = 18;
 
+/** Shorten long archetype names so adjacent labels don't collide; full name in <title>. */
+const truncate = (s: string, max = 18) => (s.length > max ? `${s.slice(0, max - 1)}…` : s);
+
 interface ConstellationNode extends SimulationNodeDatum {
   archetype: string;
   count: number;
@@ -88,6 +91,7 @@ export function ArchetypeConstellation({ archetypes }: { archetypes: TArchetypeS
             transition={{ delay: i * 0.06, duration: 0.6, ease: "easeOut" }}
             style={{ transformOrigin: `${n.x}px ${n.y}px` }}
           >
+            <title>{`${n.archetype} · seen ${n.count}×`}</title>
             {/* soft glow */}
             <circle cx={n.x} cy={n.y} r={n.r + 8} className="fill-indigo-400" fillOpacity={glowOpacity} />
             {/* node */}
@@ -120,7 +124,7 @@ export function ArchetypeConstellation({ archetypes }: { archetypes: TArchetypeS
               fontSize={11}
               className="fill-slate-500 dark:fill-slate-400"
             >
-              {n.archetype}
+              {truncate(n.archetype)}
             </text>
           </motion.g>
         );

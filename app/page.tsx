@@ -1,65 +1,73 @@
-import Image from "next/image";
+import Link from "next/link";
+
+const MODULES = [
+  {
+    name: "The Repository",
+    body: "Write dreams and reflections — by text or voice. Each entry is read symbolically and kept private.",
+  },
+  {
+    name: "The Alchemist",
+    body: "A neutral mirror, grounded in Carl Jung's analytical psychology. It amplifies symbols and names archetypes — never diagnoses.",
+  },
+  {
+    name: "The Constellation",
+    body: "Your inner balance, psychic tension, and the archetypes you carry, visualized as they shift over time.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="flex flex-1 flex-col bg-gradient-to-b from-slate-50 to-indigo-50 text-slate-700 dark:from-slate-950 dark:to-slate-900 dark:text-slate-200">
+      {/* Hero */}
+      <section className="mx-auto flex w-full max-w-3xl flex-col items-center gap-6 px-6 py-24 text-center">
+        <h1 className="text-4xl font-semibold tracking-tight text-slate-800 sm:text-5xl dark:text-slate-100">
+          Meet yourself in the mirror.
+        </h1>
+        <p className="max-w-xl text-lg leading-8 text-slate-600 dark:text-slate-300">
+          Art-Tech Therapy turns your dreams and reflections into a living map of the psyche —
+          a Jungian journal that helps you understand, and slowly integrate, your own depths.
+        </p>
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+          <Link
+            href="/journal"
+            className="rounded-full bg-indigo-500 px-7 py-3 text-sm font-medium text-white transition-colors hover:bg-indigo-600"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Begin a reflection
+          </Link>
+          <Link
+            href="/dashboard"
+            className="rounded-full bg-white/70 px-7 py-3 text-sm font-medium text-slate-700 ring-1 ring-slate-200 transition-colors hover:bg-white dark:bg-slate-900/50 dark:text-slate-200 dark:ring-slate-800"
           >
-            Documentation
-          </a>
+            See your constellation
+          </Link>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Modules */}
+      <section className="mx-auto grid w-full max-w-5xl gap-5 px-6 pb-20 sm:grid-cols-3">
+        {MODULES.map((m) => (
+          <div
+            key={m.name}
+            className="rounded-3xl bg-white/70 p-7 shadow-sm ring-1 ring-slate-200/70 dark:bg-slate-900/50 dark:ring-slate-800"
+          >
+            <h2 className="mb-2 text-lg font-medium text-slate-800 dark:text-slate-100">{m.name}</h2>
+            <p className="text-sm leading-7 text-slate-600 dark:text-slate-300">{m.body}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Privacy + safety */}
+      <section className="mx-auto w-full max-w-3xl px-6 pb-24 text-center">
+        <p className="text-sm leading-7 text-slate-500 dark:text-slate-400">
+          Privacy first: raw entries are analyzed and then purged — only encrypted insights
+          remain. This is a tool for self-reflection, not medical care or diagnosis. If you are
+          struggling,{" "}
+          <Link href="/safety" className="text-indigo-600 underline-offset-2 hover:underline dark:text-indigo-300">
+            support is here
+          </Link>
+          .
+        </p>
+      </section>
+    </main>
   );
 }

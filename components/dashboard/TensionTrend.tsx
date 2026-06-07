@@ -46,6 +46,10 @@ export function TensionTrend({ points }: { points: TrendPoint[] }) {
   });
   const yScale = scaleLinear({ domain: [0, 1], range: [innerH, 0] });
 
+  // When every reflection is on the same day, label ticks by time instead of date.
+  const spanMs = dates[dates.length - 1].getTime() - dates[0].getTime();
+  const sameDay = spanMs < 24 * 60 * 60 * 1000;
+
   const xOf = (p: TrendPoint) => xScale(new Date(p.recordedAt));
 
   return (
@@ -92,7 +96,11 @@ export function TensionTrend({ points }: { points: TrendPoint[] }) {
             top={innerH}
             scale={xScale}
             numTicks={Math.min(points.length, 5)}
-            tickFormat={(v) => new Date(v as Date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+            tickFormat={(v) =>
+              sameDay
+                ? new Date(v as Date).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+                : new Date(v as Date).toLocaleDateString(undefined, { month: "short", day: "numeric" })
+            }
             stroke={AXIS_COLOR}
             tickStroke={AXIS_COLOR}
             tickLabelProps={() => ({ fill: AXIS_COLOR, fontSize: 10, textAnchor: "middle" })}
